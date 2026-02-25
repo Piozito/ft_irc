@@ -1,22 +1,28 @@
-NAME = ircserv
-SOURCES = \
-	main.cpp
-OBJECTS = $(SOURCES:.cpp=.o)
 
-CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+SRCS =	main.c init_env.c clean_fd.c get_opt.c x.c main_loop.c \
+	init_fd.c do_select.c check_fd.c \
+	srv_create.c srv_accept.c \
+	client_read.c client_write.c
 
-all: $(NAME)
+OBJS = ${SRCS:.c=.o}
 
-$(NAME): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(NAME)
+NAME = bircd
+
+CFLAGS = -I. -g3 -Wall -Werror
+LDFLAGS = 
+
+CC = gcc
+RM = rm -f
+
+${NAME}:	${OBJS}
+		${CC} -o ${NAME} ${OBJS} ${LDFLAGS}
+
+all:		${NAME}
 
 clean:
-	rm -f $(OBJECTS)
+		${RM} ${OBJS} *~ #*#
 
-fclean: clean
-	rm -f $(NAME)
+fclean:		clean
+		${RM} ${NAME}
 
-re: fclean all
-
-.PHONY: all clean fclean re
+re:		fclean all
