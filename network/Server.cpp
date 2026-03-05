@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fragarc2 <fragarc2@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 12:03:24 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/02/26 17:15:40 by fragarc2         ###   ########.fr       */
+/*   Updated: 2026/03/05 09:31:13 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,17 @@ Server::~Server()
 {
 		if (_serverSocket != -1)
 		close(_serverSocket);
+}
+
+Server& Server::operator=(const Server& obj)
+{
+	if(this != &obj)
+	{
+		this->_port = obj._port;
+		this->_serverSocket = obj._serverSocket;
+		this->_fds = obj._fds;
+	}
+	return *this;
 }
 
 void Server::serverer()
@@ -72,7 +83,7 @@ void Server::serverer()
 			{
 				if (fds[i].fd == _serverSocket)
 				{
-					int clientSocket = accept(_serverSocket, nullptr, nullptr);
+					int clientSocket = accept(_serverSocket, NULL, NULL);
 					if (clientSocket < 0)
 						continue;
 					int cflags = fcntl(clientSocket, F_GETFL, 0);
@@ -83,7 +94,7 @@ void Server::serverer()
 					clientFd.events = POLLIN;
 					clientFd.revents = 0;
 					fds.push_back(clientFd);
-					std::cout << "New penis connected!" << std::endl;
+					std::cout << "New user connected!" << std::endl;
 				}
 				else
 				{
@@ -91,6 +102,7 @@ void Server::serverer()
 					int data = recv(fds[i].fd, buffer, sizeof(buffer) - 1, 0);
 					if(data <= 0)
 					{
+						std::cout  << "User disconnected" << std::endl;
 						close(fds[i].fd);
 						fds.erase(fds.begin() + i);
 						--i;
@@ -98,38 +110,10 @@ void Server::serverer()
 					else
 					{
 						buffer[data] = '\0';
-						std::cout << "Message from penis: " << buffer << std::endl;
-
+						this->_cli.clientRead(fds[i].fd, buffer, data);
 					}
 				}
 			}
 		}
 	}
-}
-
-int main(int argc, char **argv)
-{
-	if (argc != 2)
-	{
-		std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
-		return 1;
-	}
-
-	int port = atoi(argv[1]);
-	if (port <= 0 || port > 65535)
-	{
-		std::cerr << "Invalid port number" << std::endl;
-		return 1;
-	}
-
-	try {
-		Server server(port);
-		server.serverer();
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Server error: " << e.what() << std::endl;
-		return 1;
-	}
-
-	return 0;
 }

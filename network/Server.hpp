@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fragarc2 <fragarc2@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:27:41 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/02/26 16:34:34 by fragarc2         ###   ########.fr       */
+/*   Updated: 2026/03/05 09:27:16 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 
 #define INT_MAX std::numeric_limits<int>::max()
 
+#include "../Client/Client.hpp"
+
 class Server
 {
 	public:
@@ -45,6 +47,8 @@ class Server
 		int _serverSocket;
 		std::vector<pollfd> _fds;
 		int _port;
+
+		Client _cli;
 };
 
 #endif
