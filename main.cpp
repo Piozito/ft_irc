@@ -2,9 +2,9 @@
 
 int main(int argc, char **argv)
 {
-	if (argc != 2)
+	if (argc != 3)
 	{
-		std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
+		std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
 		return 1;
 	}
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 	}
 
 	try {
-		Server server(port);
+		Server server(port, argv[2]);
 		server.serverer();
 	}
 	catch (const std::exception& e) {

@@ -6,20 +6,21 @@
 /*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 12:03:24 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/03/05 09:31:13 by aaleixo-         ###   ########.fr       */
+/*   Updated: 2026/03/05 10:30:57 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(int port)
+Server::Server(int port, std::string password) : _cli(password)
 {
 	_port = port;
+	_password = password;
 	_serverSocket = -1;
 }
 Server::~Server()
 {
-		if (_serverSocket != -1)
+	if (_serverSocket != -1)
 		close(_serverSocket);
 }
 

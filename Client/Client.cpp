@@ -1,7 +1,8 @@
 #include "Client.hpp"
 
-Client::Client()
+Client::Client(std::string password)
 {
+	this->_serverPassword = password;
 }
 
 Client::Client(const Client &copy)
@@ -16,7 +17,10 @@ Client::~Client()
 Client& Client::operator=(const Client& obj)
 {
 	if(this != &obj)
+	{
 		this->_clients = obj._clients;
+		this->_serverPassword = obj._serverPassword;
+	}
 	return *this;
 }
 
@@ -52,13 +56,40 @@ void Client::Register(int fd, std::string line, t_client &client)
 {
 	std::istringstream iss(line);
 	std::string cmd;
+	static bool msg = 0;
+
+	if(msg == 0)
+	{
+		msg = 1;
+		sendServerMessage(fd, ":ft_irc NOTICE * :Password required (use \"PASS <password>\" to enter).");	
+	}
+	
 	iss >> cmd;
 	if (cmd == "NICK")
+	{
 		iss >> client.nick;
+	}
 	else if (cmd == "USER")
+	{
 		iss >> client.user;
+	}
+	else if (cmd == "PASS")
+	{
+		if(!cmd.empty())
+		{
+			iss >> client.pass;
 
-	if (!client.registered && !client.nick.empty() && !client.user.empty())
+			std::cout << line << std::endl;
+			std::cout << client.pass << " and " << this->_serverPassword << std::endl;;
+			if (client.pass != this->_serverPassword)
+			{
+				sendServerMessage(fd, ":ft_irc 464 * :Password incorrect");
+				return;
+			}
+		}
+	}
+
+	if (!client.registered && !client.pass.empty() && !client.nick.empty() && !client.user.empty())
 	{
 		client.registered = true;
 		sendWelcome(fd);
@@ -80,9 +111,10 @@ void Client::sendWelcome(int fd)
 {
 	t_client &cli = this->_clients[fd];
 	sendServerMessage(fd, ":ft_irc 001 " + cli.nick + " :Welcome to ft_irc!");
-	sendServerMessage(fd, ":ft_irc 002 " + cli.nick + " :Your host is ft_irc");
-	sendServerMessage(fd, ":ft_irc 003 " + cli.nick + " :This server was created 2026-03-05");
+	sendServerMessage(fd, ":ft_irc 002 " + cli.nick + " :Created by fragarc2, mde-maga and aaleixo-");
+	sendServerMessage(fd, ":ft_irc 003 " + cli.nick + " :This project was started on 26-fev-2026");
 
+	//obrigar a entrar no #general
 	sendServerMessage(fd, ":" + cli.nick + "!" + cli.user + "@localhost JOIN #general");
 }
 

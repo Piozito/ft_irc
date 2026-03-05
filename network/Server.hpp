@@ -6,7 +6,7 @@
 /*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:27:41 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/03/05 09:27:16 by aaleixo-         ###   ########.fr       */
+/*   Updated: 2026/03/05 10:18:16 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 class Server
 {
 	public:
-		Server(int port);
+		Server(int port, std::string password);
 		~Server();
 		void serverer();
 
@@ -47,6 +47,7 @@ class Server
 		int _serverSocket;
 		std::vector<pollfd> _fds;
 		int _port;
+		std::string _password;
 
 		Client _cli;
 };

@@ -12,19 +12,22 @@ struct t_client
     std::string buf;
     std::string user;
     std::string nick;
+    std::string pass;
     bool registered;
+    bool pass_check;
 
-    t_client() : fd(-1), registered(false) {};
+    t_client() : fd(-1), registered(false), pass_check(false) {};
 };
 
 class Client
 {
     private:
         std::map<int, t_client> _clients;  
+        std::string _serverPassword;
 
 
     public:
-        Client();
+        Client(std::string password);
         Client(const Client &copy);
         ~Client();
 		Client& operator=(const Client& obj);
