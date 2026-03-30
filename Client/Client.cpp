@@ -41,7 +41,9 @@ void Client::sendMessage(int fd, std::string line, t_client &cli)
 			msg.erase(0, 1);
 		if (!msg.empty() && msg[0] == ':')
 			msg.erase(0, 1);
-	
+		if (target[0] != '#')
+			return;
+		
 		std::string out = ":" + cli.nick + "!" + cli.user + "@localhost PRIVMSG " + target + " :" + msg;
 	
 		for (std::map<int, t_client>::iterator it = this->_clients.begin(); it != this->_clients.end(); ++it)
@@ -52,53 +54,40 @@ void Client::sendMessage(int fd, std::string line, t_client &cli)
 	}
 }
 
-void Client::Register(int fd, std::string line, t_client &client)
+void Client::Register(int fd, std::string line, t_client &cli)
 {
 	std::istringstream iss(line);
 	std::string cmd;
-	static bool msg = 0;
-
-	if(msg == 0)
-	{
-		msg = 1;
-		sendServerMessage(fd, ":ft_irc NOTICE * :Password required (use \"PASS <password>\" to enter).");	
-	}
-	
 	iss >> cmd;
-	if (cmd == "NICK")
+
+	if (cmd == "PASS")
 	{
-		iss >> client.nick;
-	}
-	else if (cmd == "USER")
-	{
-		iss >> client.user;
-	}
-	else if (cmd == "PASS")
-	{
-		if(!cmd.empty())
+		if (!(iss >> cli.pass) && cli.pass != this->_serverPassword)
 		{
-			iss >> client.pass;
-
-			std::cout << line << std::endl;
-			std::cout << client.pass << " and " << this->_serverPassword << std::endl;;
-			if (client.pass != this->_serverPassword)
-			{
-				sendServerMessage(fd, ":ft_irc 464 * :Password incorrect");
-				return;
-			}
+			sendServerMessage(fd, ":ft_irc 464 * :Password incorrect");
+			sendServerMessage(fd, "ERROR :Password incorrect");
+			return;
 		}
+		return;
 	}
+	else if (cmd == "NICK")
+		iss >> cli.nick;
+	else if (cmd == "USER")
+		iss >> cli.user;
 
-	if (!client.registered && !client.pass.empty() && !client.nick.empty() && !client.user.empty())
+	if (!cli.registered &&
+		!cli.pass.empty() &&
+		!cli.nick.empty() &&
+		!cli.user.empty())
 	{
-		client.registered = true;
+		cli.registered = true;
 		sendWelcome(fd);
-		std::cout << "cli [" << client.fd << "]"<< std::endl;
-		std::cout << "Nickname: " << client.nick << std::endl;
-		std::cout << "Username: " << client.user << std::endl;
-		std::string out = ":" + this->_clients[fd].nick + "!" + this->_clients[fd].user + "@localhost PRIVMSG " + "#general" + " :" + line;
-		sendServerMessage(fd, out);
 	}
+}
+
+void Client::removeCli(int fd)
+{
+	this->_clients.erase(fd);
 }
 
 void Client::sendServerMessage(int fd, const std::string& msg)
@@ -110,11 +99,13 @@ void Client::sendServerMessage(int fd, const std::string& msg)
 void Client::sendWelcome(int fd)
 {
 	t_client &cli = this->_clients[fd];
-	sendServerMessage(fd, ":ft_irc 001 " + cli.nick + " :Welcome to ft_irc!");
-	sendServerMessage(fd, ":ft_irc 002 " + cli.nick + " :Created by fragarc2, mde-maga and aaleixo-");
-	sendServerMessage(fd, ":ft_irc 003 " + cli.nick + " :This project was started on 26-fev-2026");
 
-	//obrigar a entrar no #general
+	sendServerMessage(fd, ":ft_irc 001 " + cli.nick + " :Welcome to ft_irc!");
+	sendServerMessage(fd, ":ft_irc 375 " + cli.nick + " :- Welcome to ft_irc " +  cli.nick +"! -");
+	sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- Created by fragarc2, mde-maga and aaleixo- -");
+	sendServerMessage(fd, ":ft_irc 376 " + cli.nick + " :End of MOTD");
+
+	// obriga a entrar no #general (remover quando houver os channels como deve ser)
 	sendServerMessage(fd, ":" + cli.nick + "!" + cli.user + "@localhost JOIN #general");
 }
 
@@ -141,6 +132,25 @@ void Client::clientRead(int fd, const char* buf, int bytes)
 		std::string line = client.buf.substr(0, pos);
 		client.buf.erase(0, pos + skip);
 		
+		std::cout << line << std::endl;
+
+		if (line.rfind("PING", 0) == 0)
+		{
+		    std::string token = line.substr(4);
+		    while (!token.empty() && (token[0] == ' ' || token[0] == ':'))
+		        token.erase(0, 1);
+		
+		    sendServerMessage(fd, ":ft_irc PONG ft_irc :" + token);
+		    continue;
+		}
+
+		if (line.rfind("CAP LS", 0) == 0)
+		{
+			sendServerMessage(fd, "CAP * LS :");
+			sendServerMessage(fd, "CAP * END");
+			continue;
+		}
+
 		if (!client.registered)
 			Register(fd, line, client);
 		else

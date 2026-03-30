@@ -37,4 +37,5 @@ class Client
 		void sendServerMessage(int fd, const std::string& msg);
 		void sendMessage(int fd, std::string line, t_client &cli);
 		void Register(int fd, std::string line, t_client &client);
+        void removeCli(int fd);
 };

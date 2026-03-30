@@ -6,7 +6,7 @@
 /*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 12:03:24 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/03/05 10:30:57 by aaleixo-         ###   ########.fr       */
+/*   Updated: 2026/03/30 14:35:36 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void Server::serverer()
 	if (_serverSocket < 0)
 		throw std::runtime_error("socket() failed");
 
-	int flags = fcntl(_serverSocket, F_GETFL, 0);
-	if (flags == -1 || fcntl(_serverSocket, F_SETFL, flags | O_NONBLOCK) == -1)
+	int flags = fcntl(_serverSocket, F_GETFL, 0); //CAN ONLY USE O_NONBLOCK AS A FLAG!
+	if (flags == -1 || fcntl(_serverSocket, F_SETFL, flags | O_NONBLOCK) == -1) //CAN ONLY USE O_NONBLOCK AS A FLAG!
 		throw std::runtime_error("fcntl() failed");
 
 	sockaddr_in serverAddress;
@@ -52,6 +52,11 @@ void Server::serverer()
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_port = htons(_port);
 	serverAddress.sin_addr.s_addr = INADDR_ANY;
+
+	int opt = 1;
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+		throw std::runtime_error("setsockopt(SO_REUSEADDR) failed");
+
 
 	if (bind(_serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0)
 		throw std::runtime_error("bind() failed");
@@ -104,6 +109,7 @@ void Server::serverer()
 					if(data <= 0)
 					{
 						std::cout  << "User disconnected" << std::endl;
+						this->_cli.removeCli(fds[i].fd);
 						close(fds[i].fd);
 						fds.erase(fds.begin() + i);
 						--i;
@@ -111,6 +117,9 @@ void Server::serverer()
 					else
 					{
 						buffer[data] = '\0';
+
+						std::cout << buffer << std::endl;
+
 						this->_cli.clientRead(fds[i].fd, buffer, data);
 					}
 				}
