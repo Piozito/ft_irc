@@ -173,6 +173,11 @@ void sendMessage(int fd, std::string line, Client *cli)
                 cli->sendServerMessage(fd, ":ft_irc 403 " + self.nick + " " + target + " :No such channel");
                 return;
             }
+            if (!channel->isMember(&self))
+            {
+                cli->sendServerMessage(fd, ":ft_irc 404 " + self.nick + " " + target + " :Cannot send to channel");
+                return;
+            }
             channel->broadcast(cli, out, fd);
         }
         else
