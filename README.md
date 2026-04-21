@@ -47,9 +47,9 @@ make
 nc -C 127.0.0.1 6667
 ```
 
-### Connect with an IRC client
+### Connect with an Thunderbird
 
-Any standard IRC client works (e.g. irssi, WeeChat, LimeChat). Set the server to `127.0.0.1`, the port to whatever you chose, and the password to the one you passed at startup.
+Set the server to `127.0.0.1`, the port to whatever you chose, and the password to the one you passed at startup.
 
 ---
 
