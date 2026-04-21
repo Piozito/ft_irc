@@ -6,19 +6,6 @@
 
 ---
 
-## Índice
-
-- [Fluxo Geral](#fluxo-geral)
-- [Server](#server--networkserver)
-- [Client](#client--clientclient)
-- [Channel](#channel--channelchannel)
-- [Correções de Bugs Recentes](#correções-de-bugs-recentes)
-- [Exemplos de Fluxo de Dados](#exemplos-de-fluxo-de-dados)
-- [Estrutura de Arquivos](#estrutura-de-arquivos)
-- [Códigos Numéricos IRC](#códigos-numéricos-irc)
-
----
-
 ## Fluxo Geral
 
 ```text
