@@ -45,17 +45,17 @@ void Channel::addMember(Client *main, t_client* client, const std::string& provi
         return;
 
     if (inviteOnly && !isInvited(client)) {
-        sendMessage(client->fd, "473 " + getNickname(client) + " " + name + " :Cannot join channel (+i)", main);
+        main->sendServerMessage(client->fd, ":ft_irc 473 " + getNickname(client) + " " + name + " :Cannot join channel (+i)");
         return;
     }
 
     if (!key.empty() && providedKey != key) {
-        sendMessage(client->fd, "475 " + getNickname(client) + " " + name + " :Cannot join channel (+k)", main);
+        main->sendServerMessage(client->fd, ":ft_irc 475 " + getNickname(client) + " " + name + " :Cannot join channel (+k)");
         return;
     }
 
     if (userLimit > 0 && members.size() >= userLimit) {
-        sendMessage(client->fd, "471 " + getNickname(client) + " " + name + " :Cannot join channel (+l)", main);
+        main->sendServerMessage(client->fd, ":ft_irc 471 " + getNickname(client) + " " + name + " :Cannot join channel (+l)");
         return;
     }
 
@@ -91,7 +91,7 @@ void Channel::removeOperator(t_client* client) {
 void Channel::setTopic(const std::string& newTopic, Client *main, t_client* sender) {
     if (topicRestricted && (!sender || !isOperator(sender))) {
         if (sender)
-            sendMessage(sender->fd, "482 " + getNickname(sender) + " " + name + " :You're not channel operator", main);
+            main->sendServerMessage(sender->fd, ":ft_irc 482 " + getNickname(sender) + " " + name + " :You're not channel operator");
         return;
     }
     topic = newTopic;
@@ -127,7 +127,7 @@ bool Channel::invite(Client *main, t_client* sender, t_client* target) {
         return false;
 
     inviteList.push_back(target);
-    sendMessage(sender->fd, "341 " + getNickname(sender) + " " + getNickname(target) + " " + name, main);
+    main->sendServerMessage(sender->fd, ":ft_irc 341 " + getNickname(sender) + " " + getNickname(target) + " :" + name);
     return true;
 }
 
@@ -192,4 +192,14 @@ const std::string& Channel::getKey() const {
 
 size_t Channel::getUserLimit() const {
     return userLimit;
+}
+
+void Channel::broadcast(Client *main, const std::string& msg, int excludeFd) {
+    for (std::vector<t_client*>::iterator it = members.begin(); it != members.end(); ++it)
+        if ((*it)->fd != excludeFd)
+            main->sendServerMessage((*it)->fd, msg);
+}
+
+const std::vector<t_client*>& Channel::getMembers() const {
+    return members;
 }

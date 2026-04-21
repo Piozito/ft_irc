@@ -55,6 +55,8 @@ public:
     bool isTopicRestricted() const;
     const std::string& getKey() const;
     size_t getUserLimit() const;
+    void broadcast(Client *main, const std::string& msg, int excludeFd = -1);
+    const std::vector<t_client*>& getMembers() const;
 };
 
 #endif

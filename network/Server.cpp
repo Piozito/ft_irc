@@ -78,6 +78,7 @@ void Server::serverer()
 		{
 		if (fds[i].revents & (POLLHUP | POLLERR))
 		{
+			this->_cli.removeCli(fds[i].fd);
 			close(fds[i].fd);
 			fds.erase(fds.begin() + i);
 			--i;
@@ -91,9 +92,7 @@ void Server::serverer()
 					int clientSocket = accept(_serverSocket, NULL, NULL);
 					if (clientSocket < 0)
 						continue;
-					int cflags = fcntl(clientSocket, F_GETFL, 0);
-					if (cflags != -1)
-						fcntl(clientSocket, F_SETFL, cflags | O_NONBLOCK);
+					fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 					pollfd clientFd;
 					clientFd.fd = clientSocket;
 					clientFd.events = POLLIN;
