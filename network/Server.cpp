@@ -72,7 +72,10 @@ void Server::serverer()
 	while (true)
 	{
 		if (poll(fds.data(), fds.size(), -1) < 0)
-			 throw std::runtime_error("poll() failed");
+		{
+			if (errno == EINTR) continue;
+			throw std::runtime_error("poll() failed");
+		}
 
 		for (size_t i = 0; i < fds.size(); ++i)
 		{

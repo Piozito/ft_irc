@@ -46,6 +46,12 @@ class Client
         void sendServerMessage(int fd, const std::string& msg);
         bool Register(int fd, std::string line, t_client &client);
         void removeCli(int fd);
+
+    private:
+        bool registerPass(int fd, std::istringstream& iss, t_client& cli);
+        void registerNick(int fd, std::istringstream& iss, t_client& cli);
+        void registerUser(int fd, std::istringstream& iss, t_client& cli);
+        void tryCompleteRegistration(int fd, t_client& cli);
 };
 
 void sendMessage(int fd, std::string line, Client *cli);

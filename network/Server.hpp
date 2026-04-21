@@ -24,6 +24,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <cerrno>
 #include <poll.h>
 #include <netinet/in.h>
 #include <sys/socket.h>

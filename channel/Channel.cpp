@@ -66,6 +66,7 @@ void Channel::addMember(Client *main, t_client* client, const std::string& provi
 void Channel::removeMember(t_client* client) {
     members.erase(std::remove(members.begin(), members.end(), client), members.end());
     removeOperator(client);
+    removeFromInviteList(client);
 }
 
 bool Channel::isMember(const t_client* client) const {
@@ -102,12 +103,12 @@ void Channel::setKey(const std::string& newKey) { key = newKey; }
 void Channel::setUserLimit(size_t limit) { userLimit = limit; }
 
 // -------------------- IRC Commands --------------------
-bool Channel::kick(Client *main, t_client* sender, t_client* target) {
+bool Channel::kick(Client *main, t_client* sender, t_client* target, const std::string& reason) {
     if (!sender || !target) return false;
     if (!isOperator(sender)) return false;
     if (!isMember(target)) return false;
 
-    std::string msg = ":" + sender->nick + "!" + sender->user + "@localhost " + "KICK " + name + " " + target->nick + " :kicked";
+    std::string msg = ":" + sender->nick + "!" + sender->user + "@localhost KICK " + name + " " + target->nick + " :" + reason;
 
     for (std::vector<t_client*>::iterator it = members.begin(); it != members.end(); ++it)
         main->sendServerMessage((*it)->fd, msg);

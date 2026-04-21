@@ -41,7 +41,7 @@ public:
     void setKey(const std::string& newKey);
     void setUserLimit(size_t limit);
 
-    bool kick(Client *main, t_client* sender, t_client* target);
+    bool kick(Client *main, t_client* sender, t_client* target, const std::string& reason = "Kicked");
     bool invite(Client *main, t_client* sender, t_client* target);
     bool mode(t_client* sender, char flag, bool value, t_client* target = NULL, const std::string& param = "");
 
