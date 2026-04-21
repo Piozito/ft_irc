@@ -6,7 +6,7 @@
 /*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:27:41 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/03/05 10:18:16 by aaleixo-         ###   ########.fr       */
+/*   Updated: 2026/04/20 08:45:52 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 
 #define INT_MAX std::numeric_limits<int>::max()
 
-#include "../Client/Client.hpp"
+#include "../client/Client.hpp"
 
 class Server
 {

@@ -1,6 +1,6 @@
 NAME = ircserv
 SOURCES = \
-	network/Server.cpp Client/Client.cpp main.cpp
+	network/Server.cpp client/Client.cpp main.cpp channel/Channel.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 CXX = c++
