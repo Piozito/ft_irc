@@ -686,14 +686,26 @@ void Client::sendWelcome(int fd)
 
     sendServerMessage(fd, ":ft_irc 001 " + cli.nick + " :Welcome to ft_irc, " + cli.nick + "!");
     sendServerMessage(fd, ":ft_irc 375 " + cli.nick + " :- ft_irc Message of the Day -");
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- Created by fragarc2, mde-maga and aaleixo-");
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-");
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- HOW TO GET STARTED");
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   1. You are already registered as " + cli.nick);
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   2. Join a channel:  JOIN #channel");
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   3. Send a message:  PRIVMSG #channel :your message");
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   4. Message a user:  PRIVMSG nickname :your message");
-    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-");
+    sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- Created by fragarc2, mde-maga and aaleixo-\n");
+    
+    if(cli.user.find("Thunderbird") != cli.user.npos)
+    {
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- HOW TO GET STARTED IF YOU ARE USING OUR REFERENCE CLIENT (THUNDERBIRD)");
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   1. You are already registered as " + cli.nick);
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   2. Join a channel:  /join #<channel>");
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   3. Send a message:  you just need to type your message");
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   4. Message a user:  /msg <other_user> <your message>");\
+        sendServerMessage(fd, ":" + cli.nick + "!" + cli.user + "@localhost JOIN #general");
+    }
+    else
+    {
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- HOW TO GET STARTED IF YOU ARE USING \"nc -C 127.0.0.1 <port> <password>\"");
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   1. You are already registered as " + cli.nick);
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   2. Join a channel:  JOIN #<channel>");
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   3. Send a message:  PRIVMSG #<channel> :<your message>");
+        sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :-   4. Message a user:  PRIVMSG <nickname> :<your message>\n");
+    }
+
     sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- You have been auto-joined to #general");
     sendServerMessage(fd, ":ft_irc 372 " + cli.nick + " :- Type HELP to see all available commands");
     sendServerMessage(fd, ":ft_irc 376 " + cli.nick + " :End of MOTD");

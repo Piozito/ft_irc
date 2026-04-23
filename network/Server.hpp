@@ -6,7 +6,7 @@
 /*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 15:27:41 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/04/20 08:45:52 by aaleixo-         ###   ########.fr       */
+/*   Updated: 2026/04/23 17:57:59 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ class Server
 		Server& operator=(const Server& obj);
 
 		int _serverSocket;
-		std::vector<pollfd> _fds;
 		int _port;
 		std::string _password;
 

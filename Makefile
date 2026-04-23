@@ -34,6 +34,6 @@ fclean: clean
 	@rm -f $(NAME)
 	@echo "$(YELLOW)  ✗  $(NAME) removed$(RESET)"
 
-re: fclean all`
+re: fclean all
 
 .PHONY: all clean fclean re

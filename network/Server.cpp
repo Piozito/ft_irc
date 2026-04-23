@@ -6,7 +6,7 @@
 /*   By: aaleixo- <aaleixo-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/26 12:03:24 by fragarc2          #+#    #+#             */
-/*   Updated: 2026/04/20 07:32:43 by aaleixo-         ###   ########.fr       */
+/*   Updated: 2026/04/23 17:58:41 by aaleixo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ Server& Server::operator=(const Server& obj)
 	{
 		this->_port = obj._port;
 		this->_serverSocket = obj._serverSocket;
-		this->_fds = obj._fds;
+		this->_password = obj._password;
 	}
 	return *this;
 }
